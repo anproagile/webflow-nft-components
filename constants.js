@@ -73,18 +73,7 @@ export const NETWORKS = {
             symbol: "MOVR",
             decimals: 18,
         },
-        testnetID: 1287,
+        testnetID: 1285,
         blockExplorerURL: "https://blockscout.moonriver.moonbeam.network"
-    },
-    1287: {
-        name: "Moonbase Alpha",
-        rpcURL: "https://rpc.testnet.moonbeam.network",
-        currency: {
-            name: "DEV",
-            symbol: "DEV",
-            decimals: 18,
-        },
-        testnetID: 1287,
-        blockExplorerURL: "https://moonbase-blockscout.testnet.moonbeam.network"
     }
 }
