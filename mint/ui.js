@@ -1,6 +1,6 @@
 import { mint } from "./web3.js";
+import { showAlert } from "../ui/alerts.js";
 import { parseTxError } from "../utils.js";
-import {showAlert} from "../index.js";
 
 export const updateMintButton = () => {
     const mintButton = document.querySelector('#mint-button');
