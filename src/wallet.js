@@ -1,6 +1,11 @@
+import Web3 from "web3";
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+
 import { NETWORKS } from "./constants.js";
 import {isMobile, objectMap} from "./utils.js";
 import {setContracts} from "./contract.js";
+
 
 export let [web3, provider] = [];
 
@@ -22,12 +27,12 @@ const initWeb3 = async (forceConnect = false) => {
     }
     const disableInjectedProvider = isMobile() && !window.ethereum;
     const onlyInjectedProvider = isMobile() && window.ethereum;
-    const web3Modal = new Web3Modal.default({
+    const web3Modal = new Web3Modal({
         disableInjectedProvider,
         cacheProvider: true,
         providerOptions: !onlyInjectedProvider ? {
             walletconnect: {
-                package: WalletConnectProvider.default,
+                package: WalletConnectProvider,
                 options: walletConnectOptions
             }
         } : {}
@@ -54,7 +59,7 @@ export const isWalletConnected = async () => {
     return accounts?.length > 0;
 }
 
-export const getWalletAddress = async (refresh=false) => {
+export const getWalletAddressOrConnect = async (shouldSwitchNetwork, refresh) => {
     const currentAddress = async () => {
         if (!isWeb3Initialized()) {
             return undefined;
@@ -67,7 +72,7 @@ export const getWalletAddress = async (refresh=false) => {
         }
     }
     if (!isWeb3Initialized()) {
-        await connectWallet();
+        await connectWallet(shouldSwitchNetwork ?? true);
         if (refresh) {
             window.location.reload();
         }
@@ -115,7 +120,7 @@ export const switchNetwork = async (chainID) => {
     }
 }
 
-export const connectWallet = async () => {
+export const connectWallet = async (shouldSwitchNetwork=true) => {
     console.log("Connecting Wallet")
     await initWeb3(true);
     // if (isMobile()) {
@@ -124,7 +129,7 @@ export const connectWallet = async () => {
     //         .replace("www.", "");
     //     window.open(`https://metamask.app.link/dapp/${link}`);
     // }
-    await setContracts();
+    await setContracts(shouldSwitchNetwork);
     await updateWalletStatus();
     console.log("Connected Wallet");
 }
