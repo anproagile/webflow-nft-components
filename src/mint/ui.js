@@ -1,6 +1,7 @@
 import { mint } from "./web3.js";
-import { showAlert } from "../ui/alerts.js";
 import { parseTxError } from "../utils.js";
+import {showAlert} from "../index.js";
+import {showMintModal} from "../components/MintModal";
 
 export const updateMintButton = () => {
     const mintButton = document.querySelector('#mint-button');
@@ -9,6 +10,11 @@ export const updateMintButton = () => {
             const initialBtnText = mintButton.textContent;
             setButtonText(mintButton, "Loading...")
             const quantity = getMintQuantity();
+
+            if (window.CONTRACT.nft.allowedNetworks[0] === 137) {
+                showMintModal(quantity);
+                return
+            }
 
             await mint(quantity, getMintReferral()).then((r) => {
                 setButtonText(mintButton, "Mint more");
@@ -53,7 +59,7 @@ export const updateMintByTierButtons = () => {
 
 const getMintQuantity = () => {
     const quantity = document.querySelector('#quantity-select')?.value
-    return quantity !== '' ? quantity : undefined;
+    return quantity !== '' ? Number(quantity) : undefined;
 }
 
 const getMintReferral = () => {
