@@ -1,6 +1,6 @@
-import {getWalletAddressOrConnect, web3} from "../wallet.js";
+import {getWalletAddress, web3} from "../wallet.js";
 import { formatValue, parseTxError } from "../utils.js";
-import {NFTContract, setContracts} from "../contract.js"
+import { NFTContract } from "../contract.js"
 
 const getMintTx = ({ numberOfTokens, ref, tier, wallet }) => {
     if (tier !== undefined) {
@@ -10,18 +10,15 @@ const getMintTx = ({ numberOfTokens, ref, tier, wallet }) => {
 }
 
 const getMintPrice = async (tier) => {
+    if (NFTContract.methods.price)
+        return NFTContract.methods.price().call();
     return tier ?
         await NFTContract.methods.getPrice(tier).call() :
         await NFTContract.methods.getPrice().call();
 }
 
-export const getMaxTokensPerMint = async () => {
-    if (!NFTContract) return 50
-    return Number(await NFTContract.methods.MAX_TOKENS_PER_MINT().call());
-}
-
 export const mint = async (nTokens, ref, tier) => {
-    const wallet = await getWalletAddressOrConnect(true);
+    const wallet = await getWalletAddress();
     const numberOfTokens = nTokens ?? 1;
     const mintPrice = await getMintPrice(tier);
 
