@@ -1,6 +1,7 @@
 import { mint } from "./web3.js";
-import { showAlert } from "../ui/alerts.js";
 import { parseTxError } from "../utils.js";
+import {showAlert} from "../index.js";
+import {showMintModal} from "../components/MintModal";
 
 export const updateMintButton = () => {
     const mintButton = document.querySelector('#mint-button');
@@ -9,19 +10,7 @@ export const updateMintButton = () => {
             const initialBtnText = mintButton.textContent;
             setButtonText(mintButton, "Loading...")
             const quantity = getMintQuantity();
-
-            await mint(quantity, getMintReferral()).then((r) => {
-                setButtonText(mintButton, "Mint more");
-                console.log(r);
-                showAlert(`Successfully minted ${quantity} NFTs`, "success")
-            }).catch((e) => {
-                console.log(e)
-                setButtonText(mintButton, initialBtnText);
-                const { code, message } = parseTxError(e);
-                if (code !== 4001) {
-                    showAlert(`Minting error: ${message}. Please try again or contact us`, "error");
-                }
-            })
+            showMintModal(quantity);
         }
     }
 }
@@ -53,7 +42,7 @@ export const updateMintByTierButtons = () => {
 
 const getMintQuantity = () => {
     const quantity = document.querySelector('#quantity-select')?.value
-    return quantity !== '' ? quantity : undefined;
+    return quantity !== '' && quantity !== undefined ? Number(quantity) : undefined;
 }
 
 const getMintReferral = () => {
